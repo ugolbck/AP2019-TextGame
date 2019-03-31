@@ -35,7 +35,7 @@ class House:
 
     def fileParser(self, myFile):
         """ Parses the config file to store data in dictionaries """
-        pass
+        print("Hello gitHub!")
 
 
 class Game:
