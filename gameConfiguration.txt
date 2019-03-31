@@ -1,0 +1,28 @@
+#Rooms
+room Bedroom
+room Garage
+room LivingRoom
+room Kitchen
+room Storage
+room Hall
+room Bathroom
+
+#Doors
+door W-E closed Bedroom LivingRoom
+door W-E closed LivingRoom Hall
+door W-E open Kitchen Bathroom
+door S-N locked LivingRoom Garage
+door S-N open Kitchen LivingRoom
+door S-N open Hall Storage
+
+#Items
+item bomb Garage NOW defuse
+item tv LivingRoom NOW watch
+item garage_key Kitchen USE unlock
+item code Storage USE see
+item football Hall MOVE
+item toilet Bathroom NOW pee
+item knife Kitchen STATIONARY
+
+#Start 
+start Bedroom
