@@ -20,11 +20,11 @@ class Character:
 
 class Item:
     ''' Class that defines items '''
-    def __init__(self, i_name, i_position, i_type, i_function=None):
-        self._name = i_name
-        self._position = i_position
-        self._type = i_type
-        self._function = i_function
+    def __init__(self, name_item, position_item, type_item, function_item=None):
+        self._name = name_item
+        self._position = position_item
+        self._type = type_item
+        self._function = function_item
 
 
 class House:
@@ -44,6 +44,8 @@ class House:
         # Desired result:
         # bedroom = Room(self._doors, self._items)
         # + Items/Doors instanciated ??
+        # Probably instantiate everything in House with the current Item class and similar Door class
+        # -> faire une liste d'instances d'Items (same Doors) et le passer en créant chaque Room
 
 
 class Game:
