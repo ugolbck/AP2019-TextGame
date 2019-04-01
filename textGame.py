@@ -1,3 +1,5 @@
+###
+
 import sys
 import os
 import time
@@ -58,7 +60,28 @@ class Game:
         self.character = character
         
     def do_stuff(self):
+        self.title()
+
+    def title(self):
         os.system("clear")
+        print('#######################################################')
+        # time.sleep(0.3)
+        print('################   Welcome to DEFUSE   ################')
+        # time.sleep(0.3)
+        print('###########   Copyright 2019 Ugo Loobuyck   ###########')
+        # time.sleep(0.3)
+        print('#######           github.com/ugolbck/           #######')
+        # time.sleep(0.3)
+        print('###   Project: github.com/ugolbck/AP2019-TextGame   ###')
+        # time.sleep(0.3)
+        print('#                                                     #')
+        # time.sleep(0.3)
+        print()
+        print()
+
+    def intro(self):
+        print('You are quietly asleep...')
+        print()
 
 
 
