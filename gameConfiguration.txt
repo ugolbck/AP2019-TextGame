@@ -16,12 +16,12 @@ door S-N open Kitchen LivingRoom
 door S-N open Hall Storage
 
 #Items
-item bomb Garage NOW defuse
-item tv LivingRoom NOW watch
-item garage_key Kitchen USE unlock
-item code Storage USE see
+item bomb Garage ACTIVATE defuse
+item tv LivingRoom ACTIVATE watch
+item garage_key Kitchen USABLE unlock
+item code Storage USABLE see
 item football Hall MOVE
-item toilet Bathroom NOW pee
+item toilet Bathroom ACTIVATE pee
 item knife Kitchen STATIONARY
 
 #Start 
