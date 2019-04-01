@@ -1,4 +1,7 @@
 import sys
+import os
+import time
+import random
 from collections import deque
 
 
@@ -34,7 +37,7 @@ class House:
         self._rooms = {}
         self._doors = []
         self._items = {}
-        fileParser(filename)
+        self.fileParser(filename)
 
     def fileParser(self, myFile):
         ''' Parses the config file to store data in dictionaries '''
@@ -55,7 +58,7 @@ class Game:
         self.character = character
         
     def do_stuff(self):
-        pass
+        os.system("clear")
 
 
 
