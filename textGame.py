@@ -38,7 +38,6 @@ class House:
         self._room_map = {}
         self._position = ''
         self.fileParser(filename)
-        # CONSTANTS
 
     def fileParser(self, myFile):
         ''' Parses the config file to store data in dictionaries '''
@@ -62,6 +61,19 @@ class House:
             elif split[0] == 'start':
                 self._position = line.split(' ')[1]
 
+    def getRoomMap(self):
+        return self._room_map
+    
+    def getPosition(self):
+        return self._position
+
+
+class Commands:
+    ''' List of commands available '''
+    @staticmethod
+    def funcname():
+        pass
+
 
 class Game:
     ''' Main class of the game '''
@@ -71,8 +83,8 @@ class Game:
         
     def do_stuff(self):
         self.title()
-        print(self.house._room_map)
-        print(self.house._position)
+        self.character.setPosition(self.house.getPosition())
+        
 
     def title(self):
         os.system("clear")
