@@ -1,4 +1,6 @@
-###
+# Text-based game
+# Assignment 4
+# Ugo Loobuyck
 
 import sys
 import os
@@ -23,34 +25,42 @@ class Character:
         self._position = position
 
 
-class Item:
-    ''' Class that defines items '''
-    def __init__(self, name_item, position_item, type_item, function_item=None):
-        self._name = name_item
-        self._position = position_item
-        self._type = type_item
-        self._function = function_item
-
-
 class House:
     ''' Class that defines the house and holds its components '''
+    N_WALL = 'N'
+    S_WALL = 'S'
+    E_WALL = 'E'
+    W_WALL = 'W'
+    ITEMS = 'itemlist'
+
     def __init__(self, filename):
         self.filename = filename
-        self._rooms = {}
-        self._doors = []
-        self._items = {}
+        self._room_map = {}
+        self._position = ''
         self.fileParser(filename)
+        # CONSTANTS
 
     def fileParser(self, myFile):
         ''' Parses the config file to store data in dictionaries '''
         with open(myFile) as f:
             lines = f.readlines()
-
-        # Desired result:
-        # bedroom = Room(self._doors, self._items)
-        # + Items/Doors instanciated ??
-        # Probably instantiate everything in House with the current Item class and similar Door class
-        # -> faire une liste d'instances d'Items (same Doors) et le passer en créant chaque Room
+        for line in lines:
+            split = line.split(' ')
+            if split[0] == 'room':
+                self._room_map[split[1][:-1]] = {
+                                            self.N_WALL: '',
+                                            self.S_WALL: '',
+                                            self.E_WALL: '',
+                                            self.W_WALL: '',
+                                            self.ITEMS: {}
+                                            }
+            elif split[0] == 'door':
+                self._room_map[split[3]][split[1][-1]] = [split[4][:-1], split[2]]
+                self._room_map[split[4][:-1]][split[1][0]] = [split[3], split[2]] 
+            elif split[0] == 'item':
+                self._room_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else split[3][:-1]
+            elif split[0] == 'start':
+                self._position = line.split(' ')[1]
 
 
 class Game:
@@ -61,6 +71,8 @@ class Game:
         
     def do_stuff(self):
         self.title()
+        print(self.house._room_map)
+        print(self.house._position)
 
     def title(self):
         os.system("clear")
@@ -86,5 +98,6 @@ class Game:
 
 
 if __name__ == '__main__':
+    os.system("clear")
     game = Game(House(sys.argv[1]), Character())
     game.do_stuff()
