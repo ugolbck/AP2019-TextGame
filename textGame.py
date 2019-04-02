@@ -35,7 +35,7 @@ class House:
 
     def __init__(self, filename):
         self.filename = filename
-        self._room_map = {}
+        self._house_map = {}
         self._position = ''
         self.fileParser(filename)
 
@@ -46,7 +46,7 @@ class House:
         for line in lines:
             split = line.split(' ')
             if split[0] == 'room':
-                self._room_map[split[1][:-1]] = {
+                self._house_map[split[1][:-1]] = {
                                             self.N_WALL: '',
                                             self.S_WALL: '',
                                             self.E_WALL: '',
@@ -54,62 +54,70 @@ class House:
                                             self.ITEMS: {}
                                             }
             elif split[0] == 'door':
-                self._room_map[split[3]][split[1][-1]] = [split[4][:-1], split[2]]
-                self._room_map[split[4][:-1]][split[1][0]] = [split[3], split[2]] 
+                self._house_map[split[3]][split[1][-1]] = [split[4][:-1], split[2]]
+                self._house_map[split[4][:-1]][split[1][0]] = [split[3], split[2]] 
             elif split[0] == 'item':
-                self._room_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else split[3][:-1]
+                self._house_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else split[3][:-1]
             elif split[0] == 'start':
                 self._position = line.split(' ')[1]
 
     def getRoomMap(self):
-        return self._room_map
+        return self._house_map
     
     def getPosition(self):
         return self._position
 
 
 class Commands:
-    ''' List of commands available '''
-    @staticmethod
-    def funcname():
+    ''' Set of available user commands '''
+    def __init__(self):
+        pass
+    
+    def show(self):
         pass
 
 
 class Game:
     ''' Main class of the game '''
-    def __init__(self, house, character):
+    def __init__(self, house, character, command_set):
         self.house = house
         self.character = character
+        self.command = command_set
         
-    def do_stuff(self):
+    def play(self):
         self.title()
         self.character.setPosition(self.house.getPosition())
         
 
     def title(self):
-        os.system("clear")
         print('#######################################################')
-        # time.sleep(0.3)
+        time.sleep(0.4)
         print('################   Welcome to DEFUSE   ################')
-        # time.sleep(0.3)
-        print('###########   Copyright 2019 Ugo Loobuyck   ###########')
-        # time.sleep(0.3)
+        time.sleep(0.4)
+        print('#######################################################')
+        time.sleep(0.8)
+        print('###########        Ugo Loobuyck 2019        ###########')
+        time.sleep(0.3)
         print('#######           github.com/ugolbck/           #######')
-        # time.sleep(0.3)
+        time.sleep(0.3)
         print('###   Project: github.com/ugolbck/AP2019-TextGame   ###')
-        # time.sleep(0.3)
+        time.sleep(0.3)
         print('#                                                     #')
-        # time.sleep(0.3)
+        time.sleep(0.3)
         print()
         print()
 
     def intro(self):
         print('You are quietly asleep...')
         print()
+    
+    def checkReady(self):
+        ans = input('Are you ready to play (yes/no)?\n> ')
+        return True if ans.lower() == 'yes' else False
 
 
 
 if __name__ == '__main__':
     os.system("clear")
-    game = Game(House(sys.argv[1]), Character())
-    game.do_stuff()
+    game = Game(House(sys.argv[1]), Character(), Commands())
+    game.play()
