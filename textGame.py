@@ -82,12 +82,28 @@ class Commands:
         print('Available items:', ', '.join(available_items)) if available_items else print('There are no useful items in this room.')
 
     def quit(self):
+        print('Bye bye!\n')
         sys.exit()
     
-    def go(self, position, house_map):
+    def go(self, old_position, house_map, direction):
         ''' Method that updates player position '''
-        available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
-        available_items = [key for key in house_map[position]['itemlist'].keys()]
+        available_doors = [key for key, val in house_map[old_position].items() if val and key in self.cardinals]
+        available_items = [key for key in house_map[old_position]['itemlist'].keys()]
+        if direction.upper() in available_doors:
+            if house_map[old_position][direction.upper()][1] == 'closed':
+                print('That door is closed.')
+                return old_position
+            elif house_map[old_position][direction.upper()][1] == 'locked':
+                print('That door is locked. Find the key that opens it.')
+                return old_position
+            elif house_map[old_position][direction.upper()][1] == 'open':
+                return house_map[old_position][direction.upper()][0]
+                
+        else:
+            print('There is no door in that direction.')
+
+
+    # Here: helper method to check if a door 'direction' is open or closed or locked
 
 
 class Game:
@@ -97,17 +113,36 @@ class Game:
         self.player = player
         self.command = command_set
         self.acceptable_actions = ['show', 'go', 'quit']
+        self.win = False
+        self.lose = False
         
     def play(self):
+        ''' After initialization, every thing happens here '''
         self.title()
         self.player.setPosition(self.house.getPosition())
-        action = self.prompt()
-        if action == 'show':
-            self.command.show(self.player.getPosition(), self.house.getRoomMap())
-        elif action == 'quit':
-            self.quit()
-            
-
+        ''' Actual player experience '''
+        while not self.win and not self.lose:
+            action = self.prompt()
+            if len(action) == 1:
+                # Argumentless commands
+                if action[0] == 'show':
+                    self.command.show(self.player.getPosition(), self.house.getRoomMap())
+                elif action[0] == 'quit':
+                    self.command.quit()
+            elif len(action) == 2:
+                # 1 argument commands
+                if action[0] == 'go':
+                    self.player.setPosition(self.command.go(self.player.getPosition(), self.house.getRoomMap(), action[1]))
+    
+    def prompt(self):
+        action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
+        while action[0] not in self.acceptable_actions or len(action) > 2:
+            action = input('That doesn\'t seem like something you can do, try something else\n> ').lower().split(' ')
+        if len(action) == 1:
+            return action
+        elif len(action) == 2:
+            return action[0], action[1]
+        
     def title(self):
         print('#######################################################')
         # time.sleep(0.4)
@@ -124,18 +159,12 @@ class Game:
         print('#                                                     #')
         # time.sleep(0.3)
         print()
-        print()
 
     def intro(self):
         print('You are quietly asleep...')
         print()
     
-    def prompt(self):
-        action = input('What do you want to do ?\n> ')
-        while action not in self.acceptable_actions:
-            action = input('That doesn\'t seem like something you can do, try something else\n> ')
-        return action
-
+    
     def checkReady(self):
         ans = input('Are you ready to play (yes/no)?\n> ')
         return True if ans.lower() == 'yes' else False
