@@ -100,7 +100,8 @@ class Commands:
                 return house_map[old_position][direction.upper()][0]
                 
         else:
-            print('There is no door in that direction.')
+            print('There is no door in that direction. Enter another direction.')
+            return old_position
 
 
     # Here: helper method to check if a door 'direction' is open or closed or locked
