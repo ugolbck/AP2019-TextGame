@@ -78,12 +78,25 @@ class Commands:
         available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
         available_items = [key for key in house_map[position]['itemlist'].keys()]
         print('You are now in the', position + '.')
+        time.sleep(0.2)
         print('Available doors:', ', '.join(available_doors)) if available_doors else print('There are no doors. You are basically in jail.')
+        time.sleep(0.2)
         print('Available items:', ', '.join(available_items)) if available_items else print('There are no useful items in this room.')
+        time.sleep(0.2)
 
     def quit(self):
         print('Bye bye!\n')
         sys.exit()
+    
+    def commands(self, glob_commands, play_commands):
+        print('Here are the available commands of the game:\n')
+        for i in glob_commands:
+            print(i)
+        for i in play_commands:
+            if i == 'go' or i == 'open' or i == 'unlock':
+                print(i, '<DIR>')
+            elif i == 'take' or i == 'drop' or i == 'use' or i == 'pee' or i == 'watch' or i == 'look' or i == 'defuse':
+                print(i, '<ITEM>')
     
     def go(self, old_position, house_map, direction):
         ''' Method that updates player position '''
@@ -97,14 +110,12 @@ class Commands:
                 print('That door is locked. Find the key that opens it.')
                 return old_position
             elif house_map[old_position][direction.upper()][1] == 'open':
-                return house_map[old_position][direction.upper()][0]
-                
+                new_position = house_map[old_position][direction.upper()][0]
+                self.show(new_position, house_map)
+                return new_position
         else:
             print('There is no door in that direction. Enter another direction.')
             return old_position
-
-
-    # Here: helper method to check if a door 'direction' is open or closed or locked
 
 
 class Game:
@@ -113,7 +124,8 @@ class Game:
         self.house = house
         self.player = player
         self.command = command_set
-        self.acceptable_actions = ['show', 'go', 'quit']
+        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'help']
+        self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'use', 'pee', 'watch', 'look', 'defuse']
         self.win = False
         self.lose = False
         
@@ -130,6 +142,8 @@ class Game:
                     self.command.show(self.player.getPosition(), self.house.getRoomMap())
                 elif action[0] == 'quit':
                     self.command.quit()
+                elif action[0] == 'commands':
+                    self.command.commands(self.global_actions, self.player_actions)
             elif len(action) == 2:
                 # 1 argument commands
                 if action[0] == 'go':
@@ -137,7 +151,7 @@ class Game:
     
     def prompt(self):
         action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
-        while action[0] not in self.acceptable_actions or len(action) > 2:
+        while action[0] not in self.global_actions and action[0] not in self.player_actions or len(action) > 2:
             action = input('That doesn\'t seem like something you can do, try something else\n> ').lower().split(' ')
         if len(action) == 1:
             return action
