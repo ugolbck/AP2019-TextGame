@@ -9,7 +9,7 @@ import random
 from collections import deque
 
 
-class Character:
+class Player:
     ''' Class that holds information on the player '''
     def __init__(self):
         self._position = ''
@@ -75,28 +75,38 @@ class Commands:
         
     def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
-        available_rooms = [key for key, val in house_map[position].items() if val and key in self.cardinals]
+        available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
         available_items = [key for key in house_map[position]['itemlist'].keys()]
         print('You are now in the', position + '.')
-        print('Available doors:', ', '.join(available_rooms)) if available_rooms else print('There are no doors. You are basically in jail.')
+        print('Available doors:', ', '.join(available_doors)) if available_doors else print('There are no doors. You are basically in jail.')
         print('Available items:', ', '.join(available_items)) if available_items else print('There are no useful items in this room.')
-        
-        
+
+    def quit(self):
+        sys.exit()
+    
+    def go(self, position, house_map):
+        ''' Method that updates player position '''
+        available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
+        available_items = [key for key in house_map[position]['itemlist'].keys()]
 
 
 class Game:
     ''' Main class of the game '''
-    def __init__(self, house, character, command_set):
+    def __init__(self, house, player, command_set):
         self.house = house
-        self.character = character
+        self.player = player
         self.command = command_set
+        self.acceptable_actions = ['show', 'go', 'quit']
         
     def play(self):
         self.title()
-        self.character.setPosition(self.house.getPosition())
-        self.command.show(self.character.getPosition(), self.house.getRoomMap())
-        # print(self.character.getPosition())
-        # print(self.house.getRoomMap()['LivingRoom'][self.house.N])
+        self.player.setPosition(self.house.getPosition())
+        action = self.prompt()
+        if action == 'show':
+            self.command.show(self.player.getPosition(), self.house.getRoomMap())
+        elif action == 'quit':
+            self.quit()
+            
 
     def title(self):
         print('#######################################################')
@@ -120,6 +130,12 @@ class Game:
         print('You are quietly asleep...')
         print()
     
+    def prompt(self):
+        action = input('What do you want to do ?\n> ')
+        while action not in self.acceptable_actions:
+            action = input('That doesn\'t seem like something you can do, try something else\n> ')
+        return action
+
     def checkReady(self):
         ans = input('Are you ready to play (yes/no)?\n> ')
         return True if ans.lower() == 'yes' else False
@@ -127,6 +143,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    os.system("clear")
-    game = Game(House(sys.argv[1]), Character(), Commands())
+    os.system("clear") #To move to 'title' method before release
+    game = Game(House(sys.argv[1]), Player(), Commands())
     game.play()
