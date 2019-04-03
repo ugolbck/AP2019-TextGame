@@ -20,7 +20,6 @@ class Player:
     def setPosition(self, position):
         self._position = position
 
-            
 
 class House:
     ''' Class that defines the house and holds its components '''
@@ -108,7 +107,11 @@ class Commands:
         if len(inv) == 0:
             print('You are not holding anything.')
         else:
-            print(k for k in inv.keys())
+            l_items = [k for k in inv.keys()]
+            print('You are currently holding a ' + ' and a '.join(l_items))
+
+    def cleanwindow(self):
+        os.system("clear")
 
     def go(self, old_position, house_map, direction):
         ''' Method that updates player position and returns it '''
@@ -141,10 +144,8 @@ class Commands:
                 next_room = house_map[position][direction.upper()][0]
                 house_map[next_room][self.opposites[direction.upper()]][1] = 'open'
                 house_map[position][direction.upper()][1] = 'open'
-                print('The door is now open !')
+                print('The door is now open!')
             
-        #Update status of given direction door for the current position room AND the room in the given direction
-
     def take(self, inventory, position, house_map, item):
         available_items = [key for key in house_map[position]['itemlist'].keys()]
         if not available_items:
@@ -152,16 +153,19 @@ class Commands:
         elif item not in available_items:
             print('The item you want to take isn\'t in this room.')
         elif len(inventory) >= 2:
-            print('You are already holding 2 items. Try droping one !')
+            print('You are already holding 2 items. Try droping one!')
         else:
             if house_map[position]['itemlist'][item][0] not in self.movables:
-                print('You can\'t take that item.')
+                print('You can\'t take that item, it\'s too heavy.')
             else:
-                print('You have picked up:', item)
                 inventory[item] = house_map[position]['itemlist'][item]
                 del house_map[position]['itemlist'][item]
+                print('You have picked up the', item)
             
-            
+    def drop(self, inventory, position, house_map, item):
+        house_map[position]['itemlist'][item] = inventory[item]
+        del inventory[item]
+        print('You have dropped the', item)
 
 class Game:
     ''' Main class of the game '''
@@ -169,7 +173,7 @@ class Game:
         self.house = house
         self.player = player
         self.command = command_set
-        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'help']
+        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'cleanwindow']
         self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'use', 'pee', 'watch', 'look', 'defuse']
         self.win = False
         self.lose = False
@@ -191,6 +195,8 @@ class Game:
                     self.command.commands(self.global_actions, self.player_actions)
                 elif action[0] == 'inventory':
                     self.command.inventory(self.player.inventory)
+                elif action[0] == 'cleanwindow':
+                    self.command.cleanwindow()
             elif len(action) == 2:
                 # 1 argument commands
                 if action[0] == 'go':
@@ -200,12 +206,14 @@ class Game:
                     print(self.house.getRoomMap())
                 elif action[0] == 'take':
                     self.command.take(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
+                elif action[0] == 'drop':
+                    self.command.drop(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
             
     
     def prompt(self):
-        action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
+        action = input('\nWhat do you want to do?\n> ').lower().split(' ')
         while action[0] not in self.global_actions and action[0] not in self.player_actions or len(action) > 2:
-            action = input('That doesn\'t seem like something you can do, try something else\n\n> ').lower().split(' ')
+            action = input('That doesn\'t seem like something you can do, try something else.\n\n> ').lower().split(' ')
         if len(action) == 1:
             return action
         elif len(action) == 2:
