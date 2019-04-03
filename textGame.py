@@ -12,24 +12,15 @@ class Player:
     ''' Class that holds information on the player '''
     def __init__(self):
         self._position = ''
-        self._inventory = []
+        self.inventory = {}
     
     def getPosition(self):
         return self._position
-
-    def getInventory(self):
-        return self._inventory
     
     def setPosition(self, position):
         self._position = position
 
-    def addItem(self, item):
-        if item:
-            self._inventory.append(item)
             
-            
-        
-
 
 class House:
     ''' Class that defines the house and holds its components '''
@@ -117,7 +108,7 @@ class Commands:
         if len(inv) == 0:
             print('You are not holding anything.')
         else:
-            print(', '.join(inv))
+            print(k for k in inv.keys())
 
     def go(self, old_position, house_map, direction):
         ''' Method that updates player position and returns it '''
@@ -167,11 +158,10 @@ class Commands:
                 print('You can\'t take that item.')
             else:
                 print('You have picked up:', item)
+                inventory[item] = house_map[position]['itemlist'][item]
                 del house_map[position]['itemlist'][item]
-                return item
             
             
-
 
 class Game:
     ''' Main class of the game '''
@@ -200,7 +190,7 @@ class Game:
                 elif action[0] == 'commands':
                     self.command.commands(self.global_actions, self.player_actions)
                 elif action[0] == 'inventory':
-                    self.command.inventory(self.player.getInventory())
+                    self.command.inventory(self.player.inventory)
             elif len(action) == 2:
                 # 1 argument commands
                 if action[0] == 'go':
@@ -209,8 +199,8 @@ class Game:
                     self.command.open(self.player.getPosition(), self.house.getRoomMap(), action[1])
                     print(self.house.getRoomMap())
                 elif action[0] == 'take':
-                    self.player.addItem(self.command.take(self.player.getInventory(), self.player.getPosition(), self.house.getRoomMap(), action[1]))
-                    print('INVENTORY:', self.player.getInventory())
+                    self.command.take(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
+            
     
     def prompt(self):
         action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
@@ -252,11 +242,3 @@ if __name__ == '__main__':
     os.system("clear") #To move to 'title' method before release
     game = Game(House(sys.argv[1]), Player(), Commands())
     game.play()
-
-
-
-
-''' 
-
-
- '''
