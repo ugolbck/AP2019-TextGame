@@ -6,14 +6,13 @@ import sys
 import os
 import time
 import random
-from collections import deque
 
 
 class Player:
     ''' Class that holds information on the player '''
     def __init__(self):
         self._position = ''
-        self._inventory = deque(maxlen=2)
+        self._inventory = []
     
     def getPosition(self):
         return self._position
@@ -23,6 +22,13 @@ class Player:
     
     def setPosition(self, position):
         self._position = position
+
+    def addItem(self, item):
+        if item:
+            self._inventory.append(item)
+            
+            
+        
 
 
 class House:
@@ -78,6 +84,7 @@ class Commands:
             'E': 'W',
             'W': 'E'
         }
+        self.movables = ['USABLE', 'MOVE']
         
     def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
@@ -106,6 +113,12 @@ class Commands:
             elif i == 'take' or i == 'drop' or i == 'use' or i == 'pee' or i == 'watch' or i == 'look' or i == 'defuse':
                 print(i, '<ITEM>')
     
+    def inventory(self, inv):
+        if len(inv) == 0:
+            print('You are not holding anything.')
+        else:
+            print(', '.join(inv))
+
     def go(self, old_position, house_map, direction):
         ''' Method that updates player position and returns it '''
         available_doors = [key for key, val in house_map[old_position].items() if val and key in self.cardinals]
@@ -141,6 +154,25 @@ class Commands:
             
         #Update status of given direction door for the current position room AND the room in the given direction
 
+    def take(self, inventory, position, house_map, item):
+        available_items = [key for key in house_map[position]['itemlist'].keys()]
+        if not available_items:
+            print('There are no uselful items in this room.')
+        elif item not in available_items:
+            print('The item you want to take isn\'t in this room.')
+        elif len(inventory) >= 2:
+            print('You are already holding 2 items. Try droping one !')
+        else:
+            if house_map[position]['itemlist'][item][0] not in self.movables:
+                print('You can\'t take that item.')
+            else:
+                print('You have picked up:', item)
+                del house_map[position]['itemlist'][item]
+                return item
+            
+            
+
+
 class Game:
     ''' Main class of the game '''
     def __init__(self, house, player, command_set):
@@ -167,6 +199,8 @@ class Game:
                     self.command.quit()
                 elif action[0] == 'commands':
                     self.command.commands(self.global_actions, self.player_actions)
+                elif action[0] == 'inventory':
+                    self.command.inventory(self.player.getInventory())
             elif len(action) == 2:
                 # 1 argument commands
                 if action[0] == 'go':
@@ -174,6 +208,9 @@ class Game:
                 elif action[0] == 'open':
                     self.command.open(self.player.getPosition(), self.house.getRoomMap(), action[1])
                     print(self.house.getRoomMap())
+                elif action[0] == 'take':
+                    self.player.addItem(self.command.take(self.player.getInventory(), self.player.getPosition(), self.house.getRoomMap(), action[1]))
+                    print('INVENTORY:', self.player.getInventory())
     
     def prompt(self):
         action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
@@ -205,7 +242,6 @@ class Game:
         print('You are quietly asleep...')
         print()
     
-    
     def checkReady(self):
         ans = input('Are you ready to play (yes/no)?\n> ')
         return True if ans.lower() == 'yes' else False
@@ -216,3 +252,11 @@ if __name__ == '__main__':
     os.system("clear") #To move to 'title' method before release
     game = Game(House(sys.argv[1]), Player(), Commands())
     game.play()
+
+
+
+
+''' 
+
+
+ '''

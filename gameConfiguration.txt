@@ -19,10 +19,12 @@ door S-N open Hall Storage
 item bomb Garage ACTIVATE defuse
 item tv LivingRoom ACTIVATE watch
 item garage_key Kitchen USABLE unlock
-item code Storage USABLE see
+item code Storage USABLE look
 item football Hall MOVE
 item toilet Bathroom ACTIVATE pee
 item knife Kitchen STATIONARY
+item godeceinture Kitchen MOVE
+item pic Kitchen USABLE look
 
 #Start 
-start Bedroom
+start Kitchen
