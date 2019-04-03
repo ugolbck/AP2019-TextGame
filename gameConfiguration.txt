@@ -25,4 +25,4 @@ item toilet Bathroom ACTIVATE pee
 item knife Kitchen STATIONARY
 
 #Start 
-start LivingRoom
+start Bedroom

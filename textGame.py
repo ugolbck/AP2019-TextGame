@@ -35,7 +35,7 @@ class House:
 
     def __init__(self, filename):
         self.filename = filename
-        self._house_map = {}
+        self.house_map = {}
         self._position = ''
         self.fileParser(filename)
 
@@ -46,7 +46,7 @@ class House:
         for line in lines:
             split = line.split(' ')
             if split[0] == 'room':
-                self._house_map[split[1][:-1]] = {
+                self.house_map[split[1][:-1]] = {
                                             self.N: '',
                                             self.S: '',
                                             self.E: '',
@@ -54,15 +54,15 @@ class House:
                                             self.ITEMS: {}
                                             }
             elif split[0] == 'door':
-                self._house_map[split[3]][split[1][-1]] = [split[4][:-1], split[2]]
-                self._house_map[split[4][:-1]][split[1][0]] = [split[3], split[2]] 
+                self.house_map[split[3]][split[1][-1]] = [split[4][:-1], split[2]]
+                self.house_map[split[4][:-1]][split[1][0]] = [split[3], split[2]] 
             elif split[0] == 'item':
-                self._house_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else (split[3][:-1], '')
+                self.house_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else (split[3][:-1], '')
             elif split[0] == 'start':
                 self._position = line.split(' ')[1]
 
     def getRoomMap(self):
-        return self._house_map
+        return self.house_map
     
     def getPosition(self):
         return self._position
@@ -72,6 +72,12 @@ class Commands:
     ''' Set of available user commands '''
     def __init__(self):
         self.cardinals = ['N', 'S', 'E', 'W']
+        self.opposites = {
+            'N': 'S',
+            'S': 'N',
+            'E': 'W',
+            'W': 'E'
+        }
         
     def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
@@ -85,10 +91,12 @@ class Commands:
         time.sleep(0.2)
 
     def quit(self):
+        ''' Quits the game '''
         print('Bye bye!\n')
         sys.exit()
     
     def commands(self, glob_commands, play_commands):
+        ''' Prints all the available user & globabl commands '''
         print('Here are the available commands of the game:\n')
         for i in glob_commands:
             print(i)
@@ -99,7 +107,7 @@ class Commands:
                 print(i, '<ITEM>')
     
     def go(self, old_position, house_map, direction):
-        ''' Method that updates player position '''
+        ''' Method that updates player position and returns it '''
         available_doors = [key for key, val in house_map[old_position].items() if val and key in self.cardinals]
         available_items = [key for key in house_map[old_position]['itemlist'].keys()]
         if direction.upper() in available_doors:
@@ -117,6 +125,21 @@ class Commands:
             print('There is no door in that direction. Enter another direction.')
             return old_position
 
+    def open(self, position, house_map, direction):
+        ''' Void method that updates the status of a door from closed -> open (in both rooms it connects) '''
+        available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
+        if direction.upper() in available_doors:
+            if house_map[position][direction.upper()][1] == 'locked':
+                print('That door is locked. Find the key that opens it.')
+            elif house_map[position][direction.upper()][1] == 'open':
+                print('That door is already open !')
+            elif house_map[position][direction.upper()][1] == 'closed':
+                next_room = house_map[position][direction.upper()][0]
+                house_map[next_room][self.opposites[direction.upper()]][1] = 'open'
+                house_map[position][direction.upper()][1] = 'open'
+                print('The door is now open !')
+            
+        #Update status of given direction door for the current position room AND the room in the given direction
 
 class Game:
     ''' Main class of the game '''
@@ -148,11 +171,14 @@ class Game:
                 # 1 argument commands
                 if action[0] == 'go':
                     self.player.setPosition(self.command.go(self.player.getPosition(), self.house.getRoomMap(), action[1]))
+                elif action[0] == 'open':
+                    self.command.open(self.player.getPosition(), self.house.getRoomMap(), action[1])
+                    print(self.house.getRoomMap())
     
     def prompt(self):
         action = input('\nWhat do you want to do ?\n> ').lower().split(' ')
         while action[0] not in self.global_actions and action[0] not in self.player_actions or len(action) > 2:
-            action = input('That doesn\'t seem like something you can do, try something else\n> ').lower().split(' ')
+            action = input('That doesn\'t seem like something you can do, try something else\n\n> ').lower().split(' ')
         if len(action) == 1:
             return action
         elif len(action) == 2:
