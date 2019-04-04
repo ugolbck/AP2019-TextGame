@@ -1,5 +1,6 @@
 # Text-based game
 # Assignment 4
+# Python 3.6
 # Ugo Loobuyck
 
 import sys
@@ -95,23 +96,42 @@ class Commands:
     def commands(self, glob_commands, play_commands):
         ''' Prints all the available user & globabl commands '''
         print('Here are the available commands of the game:\n')
+        time.sleep(0.2)
         for i in glob_commands:
             print(i)
+        print()
         for i in play_commands:
             if i == 'go' or i == 'open' or i == 'unlock':
                 print(i, '<DIR>')
             elif i == 'take' or i == 'drop' or i == 'use' or i == 'pee' or i == 'watch' or i == 'look' or i == 'defuse':
                 print(i, '<ITEM>')
+        time.sleep(0.2)
     
     def inventory(self, inv):
         if len(inv) == 0:
             print('You are not holding anything.')
+            time.sleep(0.2)
         else:
             l_items = [k for k in inv.keys()]
             print('You are currently holding a ' + ' and a '.join(l_items))
+            time.sleep(0.2)
 
     def cleanwindow(self):
         os.system("clear")
+
+    def pee(self, position):
+        if position == 'Bathroom':
+            print('Peeing.')
+            time.sleep(1)
+            print('Peeing..')
+            time.sleep(1)
+            print('Peeing...')
+            time.sleep(1.8)
+            print('That was a big one! On with the quest now, you have a bomb to defuse.')
+            time.sleep(0.2)
+        else:
+            print('It\'s neither the place nor the moment to do that.')
+            time.sleep(0.2)
 
     def go(self, old_position, house_map, direction):
         ''' Method that updates player position and returns it '''
@@ -120,16 +140,18 @@ class Commands:
         if direction.upper() in available_doors:
             if house_map[old_position][direction.upper()][1] == 'closed':
                 print('That door is closed.')
+                time.sleep(0.2)
                 return old_position
             elif house_map[old_position][direction.upper()][1] == 'locked':
                 print('That door is locked. Find the key that opens it.')
+                time.sleep(0.2)
                 return old_position
             elif house_map[old_position][direction.upper()][1] == 'open':
                 new_position = house_map[old_position][direction.upper()][0]
                 self.show(new_position, house_map)
                 return new_position
         else:
-            print('There is no door in that direction. Enter another direction.')
+            print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
             return old_position
 
     def open(self, position, house_map, direction):
@@ -138,34 +160,97 @@ class Commands:
         if direction.upper() in available_doors:
             if house_map[position][direction.upper()][1] == 'locked':
                 print('That door is locked. Find the key that opens it.')
+                time.sleep(0.2)
             elif house_map[position][direction.upper()][1] == 'open':
-                print('That door is already open !')
+                print('That door is already open!')
+                time.sleep(0.2)
             elif house_map[position][direction.upper()][1] == 'closed':
                 next_room = house_map[position][direction.upper()][0]
                 house_map[next_room][self.opposites[direction.upper()]][1] = 'open'
                 house_map[position][direction.upper()][1] = 'open'
                 print('The door is now open!')
+                time.sleep(0.2)
+        else:
+            print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
+            time.sleep(0.2)
             
     def take(self, inventory, position, house_map, item):
         available_items = [key for key in house_map[position]['itemlist'].keys()]
         if not available_items:
             print('There are no uselful items in this room.')
+            time.sleep(0.2)
         elif item not in available_items:
             print('The item you want to take isn\'t in this room.')
+            time.sleep(0.2)
         elif len(inventory) >= 2:
             print('You are already holding 2 items. Try droping one!')
+            time.sleep(0.2)
         else:
             if house_map[position]['itemlist'][item][0] not in self.movables:
                 print('You can\'t take that item, it\'s too heavy.')
+                time.sleep(0.2)
             else:
                 inventory[item] = house_map[position]['itemlist'][item]
                 del house_map[position]['itemlist'][item]
                 print('You have picked up the', item)
+                time.sleep(0.2)
             
     def drop(self, inventory, position, house_map, item):
         house_map[position]['itemlist'][item] = inventory[item]
         del inventory[item]
         print('You have dropped the', item)
+        time.sleep(0.2)
+
+    def unlock(self, inventory, position, house_map, direction):
+        available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
+        if direction.upper() in available_doors:
+            if house_map[position][direction.upper()][1] != 'locked':
+                print('That door is already unlocked!')
+                time.sleep(0.2)
+            else:
+                if 'key' not in inventory:
+                    print('You need a key to open that door.')
+                    time.sleep(0.2)
+                else:
+                    next_room = house_map[position][direction.upper()][0]
+                    house_map[next_room][self.opposites[direction.upper()]][1] = 'closed'
+                    house_map[position][direction.upper()][1] = 'closed'
+                    print('The door is unlocked, you can now now it.')
+                    time.sleep(0.2)
+        else:
+            print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
+            time.sleep(0.2)
+
+    def watch(self, position, item):
+        if item == 'tv':
+            if position == 'LivingRoom' or position == 'Bedroom':
+                print('Let\'s watch some TV.')
+                time.sleep(2.5)
+                print('What a waste of time that was. You have a bomb to defuse!')
+                time.sleep(0.2)
+            else:
+                print('There is no TV in that room.')
+                time.sleep(0.2)
+        else:
+            print('Why would you want to watch this? Try something else.')
+            time.sleep(0.2)
+
+    def look(self, inventory, item):
+        if item == 'code':
+            if item in inventory:
+                print('The code is 0.0.0.0')
+                time.sleep(0.2)
+            else:
+                print('Find the code before looking at it!')
+                time.sleep(0.2)
+        else:
+            print('You are looking at the wrong item. Try to find the code!')
+            time.sleep(0.2)
+
+    def defuse(self, house_map, win_trigg=False):
+        
+
+
 
 class Game:
     ''' Main class of the game '''
@@ -173,8 +258,8 @@ class Game:
         self.house = house
         self.player = player
         self.command = command_set
-        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'cleanwindow']
-        self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'use', 'pee', 'watch', 'look', 'defuse']
+        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'cleanwindow', 'pee']
+        self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'watch', 'look', 'defuse']
         self.win = False
         self.lose = False
         
@@ -182,6 +267,7 @@ class Game:
         ''' After initialization, every thing happens here '''
         self.title()
         self.player.setPosition(self.house.getPosition())
+        self.command.show(self.player.getPosition(), self.house.getRoomMap())
         ''' Actual player experience '''
         while not self.win and not self.lose:
             action = self.prompt()
@@ -197,18 +283,24 @@ class Game:
                     self.command.inventory(self.player.inventory)
                 elif action[0] == 'cleanwindow':
                     self.command.cleanwindow()
+                elif action[0] == 'pee':
+                    self.command.pee(self.player.getPosition())
             elif len(action) == 2:
                 # 1 argument commands
                 if action[0] == 'go':
                     self.player.setPosition(self.command.go(self.player.getPosition(), self.house.getRoomMap(), action[1]))
                 elif action[0] == 'open':
                     self.command.open(self.player.getPosition(), self.house.getRoomMap(), action[1])
-                    print(self.house.getRoomMap())
+                elif action[0] == 'unlock':
+                    self.command.unlock(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
                 elif action[0] == 'take':
                     self.command.take(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
                 elif action[0] == 'drop':
                     self.command.drop(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), action[1])
-            
+                elif action[0] == 'watch':
+                    self.command.watch(self.player.getPosition(), action[1])
+                elif action[0] == 'look':
+                    self.command.look(self.player.inventory, action[1])
     
     def prompt(self):
         action = input('\nWhat do you want to do?\n> ').lower().split(' ')

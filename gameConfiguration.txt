@@ -18,13 +18,13 @@ door S-N open Hall Storage
 #Items
 item bomb Garage ACTIVATE defuse
 item tv LivingRoom ACTIVATE watch
-item garage_key Kitchen USABLE unlock
+item key Kitchen USABLE unlock
 item code Storage USABLE look
 item football Hall MOVE
 item statue Hall STATIONARY
-item toilet Bathroom ACTIVATE pee
-item dishwasher Kitchen STATIONARY
-item godeceinture Kitchen MOVE
+item toilet Bathroom STATIONARY
+item knife Kitchen MOVE
+item tv Bedroom ACTIVATE watch
 item pic Kitchen USABLE look
 
 #Start 
