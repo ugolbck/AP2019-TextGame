@@ -65,6 +65,7 @@ class House:
 
 class Commands:
     ''' Set of available user commands '''
+    ''' Not very useful superclass but inheritance was required by the assignment '''
     def __init__(self):
         self.cardinals = ['N', 'S', 'E', 'W']
         self.opposites = {
@@ -128,6 +129,7 @@ class Globals(Commands):
             elif i == 'take' or i == 'drop' or i == 'use' or i == 'pee' or i == 'watch' or i == 'look' or i == 'defuse':
                 print(i, '<ITEM>')
         time.sleep(0.2)
+        print()
     
     def inventory(self, inv):
         if len(inv) == 0:
@@ -267,10 +269,10 @@ class Actions(Commands):
             time.sleep(0.2)
         print()
 
-    def look(self, inventory, item):
+    def look(self, inventory, item, code):
         if item == 'code':
             if item in inventory:
-                print('The code is 0.0.0.0')
+                print('The code is', code)
                 time.sleep(0.2)
             else:
                 print('Find the code before looking at it!')
@@ -280,10 +282,10 @@ class Actions(Commands):
             time.sleep(0.2)
         print()
 
-    def defuse(self, position, item):
+    def defuse(self, position, item, code):
         if item == 'bomb':    
             if position == 'Garage':
-                if input('Enter the 4 digits code: ') == '0000':
+                if input('Enter the 4 digits code: ') == str(code):
                     return True
                 else:
                     print('Wrong code.')
@@ -307,6 +309,7 @@ class Game:
         self.action = action_set
         self.global_actions = ['show', 'quit', 'commands', 'inventory', 'window', 'pee']
         self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'watch', 'look', 'defuse']
+        self._code = ''
         self.win = False
         self.lose = False
         self.play()
@@ -315,57 +318,62 @@ class Game:
         ''' After initialization, everything happens here '''
         self.title()
         self.player.setPosition(self.house.getPosition())
+        self._code = self.randCode()
+        name = self.playerName()
         diff = self.difficulty()
-        self.glob.show(self.player.getPosition(), self.house.house_map)
-        start = d_t()
-        end = start
+        self.intro(name)
 
-        ''' Actual player experience '''
-        while not self.win and not self.lose:
-            print('## You have {} seconds left. ##'.format(int(diff - (end - start))))
-            comm = self.prompt()
-            if len(comm) == 1:
-                # Argumentless commands
-                if comm[0] == 'show':
-                    self.glob.show(self.player.getPosition(), self.house.house_map)
-                elif comm[0] == 'quit':
-                    self.glob.quit()
-                elif comm[0] == 'commands':
-                    self.glob.commands(self.global_actions, self.player_actions)
-                elif comm[0] == 'inventory':
-                    self.glob.inventory(self.player.inventory)
-                elif comm[0] == 'window':
-                    self.glob.cleanwindow()
-                elif comm[0] == 'pee':
-                    self.glob.pee(self.player.getPosition())
-            elif len(comm) == 2:
-                # 1 argument commands
-                if comm[0] == 'go':
-                    self.player.setPosition(self.action.go(self.player.getPosition(), self.house.house_map, comm[1]))
-                    self.glob.show(self.player.getPosition(), self.house.house_map)
-                elif comm[0] == 'open':
-                    self.action.open(self.player.getPosition(), self.house.house_map, comm[1])
-                elif comm[0] == 'unlock':
-                    self.action.unlock(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
-                elif comm[0] == 'take':
-                    self.action.take(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
-                elif comm[0] == 'drop':
-                    self.action.drop(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
-                elif comm[0] == 'watch':
-                    self.action.watch(self.player.getPosition(), comm[1])
-                elif comm[0] == 'look':
-                    self.action.look(self.player.inventory, comm[1])
-                elif comm[0] == 'defuse':
-                    self.win = self.action.defuse(self.player.getPosition(), comm[1])
-            end = d_t()
-            if end - start >= diff:
-                # Only gets triggered after a command but gives the impression of real time
-                self.lose = True
+        if self.checkReady():
+            self.glob.show(self.player.getPosition(), self.house.house_map)
+            start = d_t()
+            end = start
 
-        if self.win:
-            self.winScreen()
-        elif self.lose:
-            self.lossScreen()
+            ''' Actual player experience '''
+            while not self.win and not self.lose:
+                print('## You have {} seconds left. ##'.format(int(diff - (end - start))))
+                comm = self.prompt()
+                if len(comm) == 1:
+                    # Argumentless commands
+                    if comm[0] == 'show':
+                        self.glob.show(self.player.getPosition(), self.house.house_map)
+                    elif comm[0] == 'quit':
+                        self.glob.quit()
+                    elif comm[0] == 'commands':
+                        self.glob.commands(self.global_actions, self.player_actions)
+                    elif comm[0] == 'inventory':
+                        self.glob.inventory(self.player.inventory)
+                    elif comm[0] == 'window':
+                        self.glob.window()
+                    elif comm[0] == 'pee':
+                        self.glob.pee(self.player.getPosition())
+                elif len(comm) == 2:
+                    # 1 argument commands
+                    if comm[0] == 'go':
+                        self.player.setPosition(self.action.go(self.player.getPosition(), self.house.house_map, comm[1]))
+                        self.glob.show(self.player.getPosition(), self.house.house_map)
+                    elif comm[0] == 'open':
+                        self.action.open(self.player.getPosition(), self.house.house_map, comm[1])
+                    elif comm[0] == 'unlock':
+                        self.action.unlock(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
+                    elif comm[0] == 'take':
+                        self.action.take(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
+                    elif comm[0] == 'drop':
+                        self.action.drop(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
+                    elif comm[0] == 'watch':
+                        self.action.watch(self.player.getPosition(), comm[1])
+                    elif comm[0] == 'look':
+                        self.action.look(self.player.inventory, comm[1], self._code)
+                    elif comm[0] == 'defuse':
+                        self.win = self.action.defuse(self.player.getPosition(), comm[1], self._code)
+                end = d_t()
+                if end - start >= diff:
+                    # Only gets triggered after a command but gives the impression of real time
+                    self.lose = True
+
+            if self.win:
+                self.winScreen()
+            elif self.lose:
+                self.lossScreen()
     
     def difficulty(self):
         levels = ['easy', 'hard']
@@ -405,12 +413,38 @@ class Game:
         # time.sleep(0.3)
         print()
 
-    def intro(self):
-        print('You are quietly asleep...')
-        print()
+    def playerName(self):
+        return input('What is your character\'s name?\n> ')
+        
+    def intro(self, name):
+        print('* You are quietly asleep. *', end='\r')
+        time.sleep(0.7)
+        print('* You are quietly asleep.. *', end='\r')
+        time.sleep(0.7)
+        print('* You are quietly asleep... *')
+        time.sleep(1.5)
+        print('* When suddently. *', end='\r')
+        time.sleep(0.7)
+        print('* When suddently.. *', end='\r')
+        time.sleep(0.7)
+        print('* When suddently... *', end='\r')
+        time.sleep(1.5)
+        print('* When suddently... a strange voice wakes you up. *', end='\r')
+        time.sleep(0.7)
+        print('* When suddently... a strange voice wakes you up.. *', end='\r')
+        time.sleep(0.7)
+        print('* When suddently... a strange voice wakes you up... *')
+        time.sleep(1.5)
+        
+        print(name + ', can you hear me ?')
+        time.sleep(3.5)
+        print('Good. let\'s play a game. I hid a bomb somewhere in the house, your job is to find it and, if you discover the right code, to defuse it.')
+        time.sleep(6.5)
+        print('I will assist you in that delicate mission, and update you on the time you have left.\n')
+        time.sleep(6.5)
     
     def checkReady(self):
-        ans = input('Are you ready to play (yes/no)?\n> ')
+        ans = input('Are you ready to play (yes/anything else)?\n> ')
         return True if ans.lower() == 'yes' else False
 
     def winScreen(self):
@@ -429,6 +463,10 @@ class Game:
         print('###  Checkout github.com/ugolbck/  ####')
         print('########   for source code.    ########')
         print()
+
+    def randCode(self):
+        code_list = [str(random.randint(0,9)) for i in range(4)]
+        return ''.join(code_list)
 
 
 if __name__ == '__main__':
