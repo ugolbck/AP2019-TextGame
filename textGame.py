@@ -84,16 +84,35 @@ class Globals(Commands):
         ''' Void method that shows the player his environment '''
         available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
         available_items = [key for key in house_map[position]['itemlist'].keys()]
+        print()
+        print('-'*33)
+        time.sleep(0.1)
         print('You are now in the', position + '.')
         time.sleep(0.2)
         print('Available doors:', ', '.join(available_doors)) if available_doors else print('There are no doors. You are basically in jail.')
         time.sleep(0.2)
         print('Available items:', ', '.join(available_items)) if available_items else print('There are no useful items in this room.')
         time.sleep(0.2)
+        print('-'*33)
+        time.sleep(0.1)
+        print()
 
     def quit(self):
         ''' Quits the game '''
-        print('Bye bye!\n')
+        print('Oh.', end='\r')
+        time.sleep(0.3)
+        print('Oh..', end='\r')
+        time.sleep(0.3)
+        print('Oh...')
+        time.sleep(0.3)
+        print('You don\'t want to play anymore.', end='\r')
+        time.sleep(0.3)
+        print('You don\'t want to play anymore..', end='\r')
+        time.sleep(0.3)
+        print('You don\'t want to play anymore...')
+        time.sleep(0.6)
+        print('Come back any time!')
+
         sys.exit()
     
     def commands(self, glob_commands, play_commands):
@@ -118,8 +137,9 @@ class Globals(Commands):
             l_items = [k for k in inv.keys()]
             print('You are currently holding a ' + ' and a '.join(l_items))
             time.sleep(0.2)
+        print()
 
-    def cleanwindow(self):
+    def window(self):
         os.system("clear")
 
     def pee(self, position):
@@ -135,6 +155,7 @@ class Globals(Commands):
         else:
             print('It\'s neither the place nor the moment to do that.')
             time.sleep(0.2)
+        print()
 
 
 class Actions(Commands):
@@ -201,12 +222,14 @@ class Actions(Commands):
                 del house_map[position]['itemlist'][item]
                 print('You have picked up the', item)
                 time.sleep(0.2)
+        print()
             
     def drop(self, inventory, position, house_map, item):
         house_map[position]['itemlist'][item] = inventory[item]
         del inventory[item]
         print('You have dropped the', item)
         time.sleep(0.2)
+        print()
 
     def unlock(self, inventory, position, house_map, direction):
         available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
@@ -227,6 +250,7 @@ class Actions(Commands):
         else:
             print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
             time.sleep(0.2)
+        print()
 
     def watch(self, position, item):
         if item == 'tv':
@@ -241,6 +265,7 @@ class Actions(Commands):
         else:
             print('Why would you want to watch this? Try something else.')
             time.sleep(0.2)
+        print()
 
     def look(self, inventory, item):
         if item == 'code':
@@ -253,6 +278,7 @@ class Actions(Commands):
         else:
             print('You are looking at the wrong item. Try to find the code!')
             time.sleep(0.2)
+        print()
 
     def defuse(self, position, item):
         if item == 'bomb':    
@@ -269,7 +295,7 @@ class Actions(Commands):
         else:
             print('You can\'t defuse that.')
             time.sleep(0.2)
-
+        print()
 
 
 class Game:
@@ -279,20 +305,24 @@ class Game:
         self.player = player
         self.glob = global_set
         self.action = action_set
-        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'cleanwindow', 'pee']
+        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'window', 'pee']
         self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'watch', 'look', 'defuse']
         self.win = False
         self.lose = False
         self.play()
 
     def play(self):
-        ''' After initialization, every thing happens here '''
+        ''' After initialization, everything happens here '''
         self.title()
-        start = d_t()
         self.player.setPosition(self.house.getPosition())
+        diff = self.difficulty()
         self.glob.show(self.player.getPosition(), self.house.house_map)
+        start = d_t()
+        end = start
+
         ''' Actual player experience '''
         while not self.win and not self.lose:
+            print('## You have {} seconds left. ##'.format(int(diff - (end - start))))
             comm = self.prompt()
             if len(comm) == 1:
                 # Argumentless commands
@@ -304,7 +334,7 @@ class Game:
                     self.glob.commands(self.global_actions, self.player_actions)
                 elif comm[0] == 'inventory':
                     self.glob.inventory(self.player.inventory)
-                elif comm[0] == 'cleanwindow':
+                elif comm[0] == 'window':
                     self.glob.cleanwindow()
                 elif comm[0] == 'pee':
                     self.glob.pee(self.player.getPosition())
@@ -327,26 +357,27 @@ class Game:
                     self.action.look(self.player.inventory, comm[1])
                 elif comm[0] == 'defuse':
                     self.win = self.action.defuse(self.player.getPosition(), comm[1])
-            b = d_t()
-            print(b-start)
+            end = d_t()
+            if end - start >= diff:
+                # Only gets triggered after a command but gives the impression of real time
+                self.lose = True
 
         if self.win:
-            # Make method
-            print()
-            print()
-            print('########### CONGRATULATIONS ###########')
-            print('########     YOU SURVIVED!     ########')
-            print('###  Checkout github.com/ugolbck/  ####')
-            print('########   for source code.    ########')
-        if self.lose:
-            # Make method
-            print()
-            print()
-            print('########### BOOOOOOOOOOOOOM ###########')
-            print('########       YOU LOSE!       ########')
-            print('###  Checkout github.com/ugolbck/  ####')
-            print('########   for source code.    ########')
+            self.winScreen()
+        elif self.lose:
+            self.lossScreen()
     
+    def difficulty(self):
+        levels = ['easy', 'hard']
+        print('\nChoose your level of difficulty:\n')
+        print('{0:10} | {1:^12}'.format('easy', 'hard'))
+        print('-'*25)
+        print('{0:10} | {1:^12}'.format('5 minutes', '2 minutes'))
+        dif = input('\n> ')
+        while dif.lower() not in levels:
+            dif = input('Something went wrong. Choose between easy and hard\n> ')
+        return 10 if dif == 'hard' else 300
+
     def prompt(self):
         comm = input('\nWhat do you want to do?\n> ').lower().split(' ')
         while comm[0] not in self.global_actions and comm[0] not in self.player_actions or len(comm) > 2:
@@ -357,6 +388,7 @@ class Game:
             return comm[0], comm[1]
         
     def title(self):
+        os.system("clear")
         print('#######################################################')
         # time.sleep(0.4)
         print('################   Welcome to DEFUSE   ################')
@@ -381,9 +413,24 @@ class Game:
         ans = input('Are you ready to play (yes/no)?\n> ')
         return True if ans.lower() == 'yes' else False
 
+    def winScreen(self):
+        print()
+        print('########### CONGRATULATIONS ###########')
+        print('########     YOU SURVIVED!     ########')
+        print('###  Checkout github.com/ugolbck/  ####')
+        print('########   for source code.    ########')
+        print()
+
+    def lossScreen(self):
+        print()
+        print()
+        print('########### BOOOOOOOOOOOOOM ###########')
+        print('########       YOU LOSE!       ########')
+        print('###  Checkout github.com/ugolbck/  ####')
+        print('########   for source code.    ########')
+        print()
 
 
 if __name__ == '__main__':
-    os.system("clear") #To move to 'title' method before release
     game = Game(House(sys.argv[1]), Player(), Globals(), Actions())
     
