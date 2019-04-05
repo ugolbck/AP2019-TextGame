@@ -80,7 +80,7 @@ class Globals(Commands):
     def __init__(self):
             super().__init__()
 
-     def show(self, position, house_map):
+    def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
         available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
         available_items = [key for key in house_map[position]['itemlist'].keys()]
@@ -156,7 +156,6 @@ class Actions(Commands):
                 return old_position
             elif house_map[old_position][direction.upper()][1] == 'open':
                 new_position = house_map[old_position][direction.upper()][0]
-                self.show(new_position, house_map)
                 return new_position
         else:
             print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
@@ -313,6 +312,7 @@ class Game:
                 # 1 argument commands
                 if comm[0] == 'go':
                     self.player.setPosition(self.action.go(self.player.getPosition(), self.house.house_map, comm[1]))
+                    self.glob.show(self.player.getPosition(), self.house.house_map)
                 elif comm[0] == 'open':
                     self.action.open(self.player.getPosition(), self.house.house_map, comm[1])
                 elif comm[0] == 'unlock':
