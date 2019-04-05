@@ -81,6 +81,9 @@ class Globals(Commands):
     def __init__(self):
             super().__init__()
 
+    def help(self):
+        pass
+
     def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
         available_doors = [key for key, val in house_map[position].items() if val and key in self.cardinals]
