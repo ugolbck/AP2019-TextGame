@@ -58,11 +58,6 @@ class House:
                 self.house_map[split[2]][self.ITEMS][split[1]] = (split[3], split[4][:-1]) if len(split) == 5 else (split[3][:-1], '')
             elif split[0] == 'start':
                 self._position = line.split(' ')[1]
-
-    def getRoomMap(self):
-        # Theoretically useless for a public attribute, but I didn't have time to implement a correct setter so I let it
-        # public and use this method to get the map in the Game class instead of just self.house.house_map
-        return self.house_map
     
     def getPosition(self):
         return self._position
@@ -283,7 +278,7 @@ class Game:
     def __init__(self, house, player, global_set, action_set):
         self.house = house
         self.player = player
-        self.command = global_set
+        self.glob = global_set
         self.action = action_set
         self.global_actions = ['show', 'quit', 'commands', 'inventory', 'cleanwindow', 'pee']
         self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'watch', 'look', 'defuse']
@@ -296,36 +291,36 @@ class Game:
         self.title()
         start = d_t()
         self.player.setPosition(self.house.getPosition())
-        self.command.show(self.player.getPosition(), self.house.getRoomMap())
+        self.glob.show(self.player.getPosition(), self.house.house_map)
         ''' Actual player experience '''
         while not self.win and not self.lose:
             comm = self.prompt()
             if len(comm) == 1:
                 # Argumentless commands
                 if comm[0] == 'show':
-                    self.command.show(self.player.getPosition(), self.house.getRoomMap())
+                    self.glob.show(self.player.getPosition(), self.house.house_map)
                 elif comm[0] == 'quit':
-                    self.command.quit()
+                    self.glob.quit()
                 elif comm[0] == 'commands':
-                    self.command.commands(self.global_actions, self.player_actions)
+                    self.glob.commands(self.global_actions, self.player_actions)
                 elif comm[0] == 'inventory':
-                    self.command.inventory(self.player.inventory)
+                    self.glob.inventory(self.player.inventory)
                 elif comm[0] == 'cleanwindow':
-                    self.command.cleanwindow()
+                    self.glob.cleanwindow()
                 elif comm[0] == 'pee':
-                    self.command.pee(self.player.getPosition())
+                    self.glob.pee(self.player.getPosition())
             elif len(comm) == 2:
                 # 1 argument commands
                 if comm[0] == 'go':
-                    self.player.setPosition(self.action.go(self.player.getPosition(), self.house.getRoomMap(), comm[1]))
+                    self.player.setPosition(self.action.go(self.player.getPosition(), self.house.house_map, comm[1]))
                 elif comm[0] == 'open':
-                    self.action.open(self.player.getPosition(), self.house.getRoomMap(), comm[1])
+                    self.action.open(self.player.getPosition(), self.house.house_map, comm[1])
                 elif comm[0] == 'unlock':
-                    self.action.unlock(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), comm[1])
+                    self.action.unlock(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
                 elif comm[0] == 'take':
-                    self.action.take(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), comm[1])
+                    self.action.take(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
                 elif comm[0] == 'drop':
-                    self.action.drop(self.player.inventory, self.player.getPosition(), self.house.getRoomMap(), comm[1])
+                    self.action.drop(self.player.inventory, self.player.getPosition(), self.house.house_map, comm[1])
                 elif comm[0] == 'watch':
                     self.action.watch(self.player.getPosition(), comm[1])
                 elif comm[0] == 'look':
