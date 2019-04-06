@@ -2,6 +2,7 @@
 # Assignment 4
 # Python 3.6
 # Ugo Loobuyck
+# To run: 'python3 textGame.py gameConfiguration.py'
 
 import sys
 import os
@@ -442,25 +443,25 @@ class Game:
         time.sleep(0.7)
         print('* You are quietly asleep... *')
         time.sleep(1.5)
-        print('* When suddently. *', end='\r')
+        print('* When suddenly. *', end='\r')
         time.sleep(0.7)
-        print('* When suddently.. *', end='\r')
+        print('* When suddenly.. *', end='\r')
         time.sleep(0.7)
-        print('* When suddently... *', end='\r')
+        print('* When suddenly... *', end='\r')
         time.sleep(1.5)
-        print('* When suddently... a strange voice wakes you up. *', end='\r')
+        print('* When suddenly... a strange voice wakes you up. *', end='\r')
         time.sleep(0.7)
-        print('* When suddently... a strange voice wakes you up.. *', end='\r')
+        print('* When suddenly... a strange voice wakes you up.. *', end='\r')
         time.sleep(0.7)
-        print('* When suddently... a strange voice wakes you up... *')
+        print('* When suddenly... a strange voice wakes you up... *')
         time.sleep(1.5)
         
         print(name + ', can you hear me ?')
-        time.sleep(2.5)
-        print('Good. let\'s play a game. I hid a bomb somewhere in the house, your job is to find it and, if you discover the right code, to defuse it.')
-        time.sleep(5.5)
+        time.sleep(2)
+        print('Good. Let\'s play a game. I hid a bomb somewhere in the house, your job is to find it and, if you discover the right code, to defuse it.')
+        time.sleep(5)
         print('I will assist you in that delicate mission, and update you on the time you have left.\n')
-        time.sleep(5.5)
+        time.sleep(5)
     
     def checkReady(self):
         ans = input('Are you ready to play (yes/anything else)?\n> ')
