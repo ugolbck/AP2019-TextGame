@@ -82,7 +82,20 @@ class Globals(Commands):
             super().__init__()
 
     def help(self):
-        pass
+        os.system("clear")
+        print('##      Welcome to the help center      ##')
+        print('##                                      ##')
+        print('##    To see the available commands,    ##')
+        print('##           enter "commands"           ##')
+        print('##                                      ##')
+        print('##    Some commands require to enter    ##')
+        print('##     a direction or an item name:     ##')
+        print('##     "open N", "take plant" etc...    ##')
+        print('##                                      ##')
+        print('##       Enter "show" to observe        ##')
+        print('##           your environment           ##')
+        print('##                                      ##')
+        print('##         Enter "quit" to quit         ##\n')
 
     def show(self, position, house_map):
         ''' Void method that shows the player his environment '''
@@ -206,6 +219,7 @@ class Actions(Commands):
         else:
             print('There is no door in that direction. Enter another direction. Enter "show" to see the doors.')
             time.sleep(0.2)
+        print()
             
     def take(self, inventory, position, house_map, item):
         available_items = [key for key in house_map[position]['itemlist'].keys()]
@@ -310,7 +324,7 @@ class Game:
         self.player = player
         self.glob = global_set
         self.action = action_set
-        self.global_actions = ['show', 'quit', 'commands', 'inventory', 'window', 'pee']
+        self.global_actions = ['help', 'show', 'quit', 'commands', 'inventory', 'window', 'pee']
         self.player_actions = ['go', 'open', 'unlock', 'take', 'drop', 'watch', 'look', 'defuse']
         self._code = ''
         self.win = False
@@ -337,7 +351,9 @@ class Game:
                 comm = self.prompt()
                 if len(comm) == 1:
                     # Argumentless commands
-                    if comm[0] == 'show':
+                    if comm[0] == 'help':
+                        self.glob.help()
+                    elif comm[0] == 'show':
                         self.glob.show(self.player.getPosition(), self.house.house_map)
                     elif comm[0] == 'quit':
                         self.glob.quit()
@@ -387,7 +403,7 @@ class Game:
         dif = input('\n> ')
         while dif.lower() not in levels:
             dif = input('Something went wrong. Choose between easy and hard\n> ')
-        return 10 if dif == 'hard' else 300
+        return 120 if dif == 'hard' else 300
 
     def prompt(self):
         comm = input('\nWhat do you want to do?\n> ').lower().split(' ')
@@ -440,11 +456,11 @@ class Game:
         time.sleep(1.5)
         
         print(name + ', can you hear me ?')
-        time.sleep(3.5)
+        time.sleep(2.5)
         print('Good. let\'s play a game. I hid a bomb somewhere in the house, your job is to find it and, if you discover the right code, to defuse it.')
-        time.sleep(6.5)
+        time.sleep(5.5)
         print('I will assist you in that delicate mission, and update you on the time you have left.\n')
-        time.sleep(6.5)
+        time.sleep(5.5)
     
     def checkReady(self):
         ans = input('Are you ready to play (yes/anything else)?\n> ')

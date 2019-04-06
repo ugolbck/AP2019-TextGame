@@ -1,0 +1,259 @@
+#######################################################
+################   Welcome to DEFUSE   ################
+#######################################################
+###########        Ugo Loobuyck 2019        ###########
+#######           github.com/ugolbck/           #######
+###   Project: github.com/ugolbck/AP2019-TextGame   ###
+#                                                     #
+
+What is your character's name?
+> Ugo
+
+Choose your level of difficulty:
+
+easy       |     hard    
+-------------------------
+5 minutes  |  2 minutes  
+
+> hard
+* You are quietly asleep... *
+* When suddently... a strange voice wakes you up... *
+Ugo, can you hear me ?
+Good. let's play a game. I hid a bomb somewhere in the house, your job is to find it and, if you discover the right code, to defuse it.
+I will assist you in that delicate mission, and update you on the time you have left.
+
+Are you ready to play (yes/anything else)?
+> yes
+
+---------------------------------
+You are now in the Bedroom.
+Available doors: E
+Available items: tv
+---------------------------------
+
+## You have 120 seconds left. ##
+
+What do you want to do?
+> go E
+That door is closed.
+
+---------------------------------
+You are now in the Bedroom.
+Available doors: E
+Available items: tv
+---------------------------------
+
+## You have 115 seconds left. ##
+
+What do you want to do?
+> open S
+There is no door in that direction. Enter another direction. Enter "show" to see the doors.
+
+## You have 112 seconds left. ##
+
+What do you want to do?
+> open E
+The door is now open!
+
+## You have 109 seconds left. ##
+
+What do you want to do?
+> func
+That doesn't seem like something you can do, try something else.
+
+> sho
+That doesn't seem like something you can do, try something else.
+
+> show
+
+---------------------------------
+You are now in the Bedroom.
+Available doors: E
+Available items: tv
+---------------------------------
+
+## You have 100 seconds left. ##
+
+What do you want to do?
+> go E
+
+---------------------------------
+You are now in the LivingRoom.
+Available doors: N, S, E, W
+Available items: tv, sofa
+---------------------------------
+
+## You have 89 seconds left. ##
+
+What do you want to do?
+> take sofa
+You can't take that item, it's too heavy.
+
+## You have 86 seconds left. ##
+
+What do you want to do?
+> go S
+
+---------------------------------
+You are now in the Kitchen.
+Available doors: N, E
+Available items: key, knife
+---------------------------------
+
+## You have 82 seconds left. ##
+
+What do you want to do?
+> take key
+You have picked up the key
+
+## You have 79 seconds left. ##
+
+What do you want to do?
+> take knife
+You have picked up the knife
+
+## You have 75 seconds left. ##
+
+What do you want to do?
+> inventory
+You are currently holding a key and a knife
+
+## You have 72 seconds left. ##
+
+What do you want to do?
+> go E
+
+---------------------------------
+You are now in the Bathroom.
+Available doors: W
+Available items: toilet
+---------------------------------
+
+## You have 67 seconds left. ##
+
+What do you want to do?
+> pee
+Peeing...
+That was a big one! On with the quest now, you have a bomb to defuse.
+
+## You have 60 seconds left. ##
+
+What do you want to do?
+> go W
+
+---------------------------------
+You are now in the Kitchen.
+Available doors: N, E
+There are no useful items in this room.
+---------------------------------
+
+## You have 56 seconds left. ##
+
+What do you want to do?
+> go S
+There is no door in that direction. Enter another direction. Enter "show" to see the doors.
+
+---------------------------------
+You are now in the Kitchen.
+Available doors: N, E
+There are no useful items in this room.
+---------------------------------
+
+## You have 54 seconds left. ##
+
+What do you want to do?
+> go N
+
+---------------------------------
+You are now in the LivingRoom.
+Available doors: N, S, E, W
+Available items: tv, sofa
+---------------------------------
+
+## You have 51 seconds left. ##
+
+What do you want to do?
+> go E
+
+---------------------------------
+You are now in the Hall.
+Available doors: N, W
+Available items: toy, statue
+---------------------------------
+
+## You have 47 seconds left. ##
+
+What do you want to do?
+> take toy
+You are already holding 2 items. Try droping one!
+
+## You have 42 seconds left. ##
+
+What do you want to do?
+> inventory
+You are currently holding a key and a knife
+
+## You have 35 seconds left. ##
+
+What do you want to do?
+> drop knife
+You have dropped the knife
+
+## You have 26 seconds left. ##
+
+What do you want to do?
+> go N
+That door is closed.
+
+---------------------------------
+You are now in the Hall.
+Available doors: N, W
+Available items: toy, statue, knife
+---------------------------------
+
+## You have 21 seconds left. ##
+
+What do you want to do?
+> open N
+The door is now open!
+
+## You have 13 seconds left. ##
+
+What do you want to do?
+> go N
+
+---------------------------------
+You are now in the Storage.
+Available doors: S
+Available items: code
+---------------------------------
+
+## You have 8 seconds left. ##
+
+What do you want to do?
+> take code
+You have picked up the code
+
+## You have 4 seconds left. ##
+
+What do you want to do?
+> look code
+The code is 7305
+
+## You have 0 seconds left. ##
+
+What do you want to do?
+> go S
+
+---------------------------------
+You are now in the Hall.
+Available doors: N, W
+Available items: toy, statue, knife
+---------------------------------
+
+
+
+########### BOOOOOOOOOOOOOM ###########
+########       YOU LOSE!       ########
+###  Checkout github.com/ugolbck/  ####
+########   for source code.    ########
