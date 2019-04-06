@@ -9,22 +9,24 @@ room Bathroom
 
 #Doors
 door W-E closed Bedroom LivingRoom
-door W-E closed LivingRoom Hall
+door W-E open LivingRoom Hall
 door W-E open Kitchen Bathroom
-door S-N open LivingRoom Garage
+door S-N locked LivingRoom Garage
 door S-N open Kitchen LivingRoom
-door S-N open Hall Storage
+door S-N closed Hall Storage
 
 #Items
 item bomb Garage ACTIVATE defuse
+item car Garage STATIONARY
 item tv LivingRoom ACTIVATE watch
-item key LivingRoom USABLE unlock
-item code LivingRoom USABLE look
-item football Hall MOVE
+item key Kitchen USABLE unlock
+item code Storage USABLE look
+item toy Hall MOVE
 item statue Hall STATIONARY
 item toilet Bathroom STATIONARY
 item knife Kitchen MOVE
 item tv Bedroom ACTIVATE watch
+item sofa LivingRoom STATIONARY
 
 #Start 
-start LivingRoom
+start Bedroom
